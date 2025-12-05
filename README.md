@@ -8,175 +8,130 @@
 ---
 
 ## 📌 Overview
-Smart Library – Digital Quantum Mapping (DQM) adalah sistem otomasi lingkungan berbasis sensor yang dirancang untuk melindungi koleksi perpustakaan dari ancaman seperti:
+Smart Library – Digital Quantum Mapping (DQM) adalah sistem otomasi berbasis multi-sensor yang dirancang untuk melindungi lingkungan perpustakaan dari ancaman seperti suhu ekstrem, asap/gas berbahaya, kebakaran, kualitas udara buruk, dan kebisingan.
 
-- Kebakaran (fire propagation)
-- Kenaikan suhu ekstrem
-- Gas berbahaya / asap (smoke)
-- Kualitas udara buruk (PM2.5, VOC)
-- Polusi suara
-- Ketidaknyamanan ruang
-
-Proyek ini mencakup desain *multi-sensor embedded system*, **quantization pipeline**, **Boolean logic**, **truth table**, **Finite State Machine (FSM)**, **gate-level mapping**, hingga **implementasi HDL (VHDL/SystemVerilog)** dan **C# software model**.
-
-Proyek ini disusun sebagai bagian dari *Step-by-Step Engineering Workflow* Digital Quantum Mapping.
+DQM menggunakan pendekatan bertahap mulai dari **Quantization**, **Boolean Logic**, **Truth Table**, **FSM**, **Gate Mapping**, hingga **implementasi HDL (VHDL/SV)** dan **C# Software Model** sebagai reference engine.
 
 ---
 
 # 🧠 Project Roadmap (DQM Workflow)
 
-## **Step 1 — Sensor Quantization & Digital Mapping**
-- Mendefinisikan pemetaan sensor → sinyal digital:  
-  `T_high`, `R_rise`, `S_smoke`, `P_high`, `G_high`, `N_noise`
-- Thresholding, hysteresis, confirmation windows
+## **Step 1 — Sensor Quantization & Mapping**
+Menentukan sinyal digital hasil pemetaan sensor:
+- `T_high`, `R_rise`, `S_smoke`
+- `P_high` (PM2.5), `G_high` (Gas VOC)
+- `N_noise` (Noise threshold)
+
+Termasuk:
+- Thresholding  
+- Hysteresis  
+- Confirmation windows  
 - Safety interlocks
-- Representasi aktuator (Sprinkler, Fan, Purifier, Alarm, Buzzer)
-- Output dari Step 1 → *Digital Signal Dictionary*
-
-📄 **File terkait:**  
-`docs/step1_quantization.pdf` (opsional)  
-`src/quantizer.cs`
 
 ---
 
-## **Step 2 — Truth Tables & Boolean Equation**
-- Penyederhanaan logika menggunakan AND/OR/NOT  
-- Konstruksi tabel keputusan untuk:
-  - Fire subsystem
-  - Air quality subsystem
-  - Noise subsystem
-- Boolean minimization (K-map optional)
-- Priority arbitration rules  
-
-📄 **File terkait:**  
-`docs/step2_truth_table.pdf`
+## **Step 2 — Truth Tables & Boolean Logic**
+- Truth table untuk Fire, Air Quality, dan Noise subsystem  
+- Penyederhanaan Boolean  
+- Arbitration logic  
+- Interlock rules
 
 ---
 
-## **Step 3 — Finite State Machine (FSM) Design**
-FSM utama memiliki state:
+## **Step 3 — Finite State Machine (FSM)**
+State utama:
 - `S_NORMAL`
 - `S_WARNING`
 - `S_ALERT`
 - `S_EMERGENCY` (latched)
 
-Mendukung event:
-`e_pm`, `e_smoke`, `e_temp`, `e_clear`, `e_reset`
-
-Dilengkapi:
-- Output per-state  
-- Interlock rules  
-- Transition diagram  
-
-📄 **File terkait:**  
-`src/fsm.vhd`  
-`src/fsm.sv`  
-`src/fsm_diagram.png`
+Dengan event:
+`e_temp`, `e_smoke`, `e_pm`, `e_clear`, `e_reset`
 
 ---
 
-## **Step 4 — System Architecture & Electronics**
+## **Step 4 — System Architecture**
 - Block diagram  
+- Sensor synchronisers  
+- Driver actuator (relay/solenoid)  
 - Power domain separation  
-- Sensor synchronizers  
-- MCU/FPGA interface  
-- Actuator driver stages (relay, MOSFET, solenoid)  
-- Safety & fail-safe design  
-
-📄 **File terkait:**  
-`docs/step4_architecture.pdf`
+- Fail-safe design  
 
 ---
 
-## **Step 5 — Flip-Flop Usage & Clocking Strategy**
-Menjelaskan:
-- FF untuk FSM state register  
-- Synchronizer flip-flops untuk I2S/UART/ADC signals  
-- T-FF & counters untuk PWM / buzzer tone  
+## **Step 5 — Flip-Flop Usage**
+- FF untuk FSM register  
+- D-FF untuk synchronizer  
+- T-FF/counter untuk PWM fan & buzzer  
 - Timing constraints  
-
-📄 **File terkait:**  
-`docs/step5_flipflops.pdf`
 
 ---
 
 ## **Step 6 — Gate-Level Mapping**
-- Implementasi dengan universal gates (NAND/NOR only)  
-- Safety-critical logic mapping  
-- Mapping FSM equations ke jaringan gerbang  
-
-📄 **File terkait:**  
-`src/gate_level_nand.sv`  
-`src/gate_level_nor.sv`
+Implementasi menggunakan universal gates:
+- NAND-only realization  
+- NOR-only realization  
+- Combinational gate mapping dari Boolean Step 2  
+- State transition logic  
 
 ---
 
 ## **Step 7 — Logic Block Diagram**
-Diagram blok logika lengkap berdasarkan Boolean mapping + FSM transitions.  
-Termasuk:
-- Fire protection logic block  
-- Air quality logic block  
-- Arbitration logic  
-- Sprinkler interlock network  
+Meliputi:
+- Fire logic network  
+- Air quality logic network  
+- Arbitration block  
+- Sprinkler interlock  
 
-📷 **File terkait:**  
-`assets/logic_block_diagram.png`  
-`src/step7_diagram.tex` (LaTeX)
+`assets/logic_block_diagram.png`
 
 ---
 
-## **Step 8 — Implementation Layer (HDL & C#)**
+## **Step 8 — Implementation Layer (HDL + C#)**
 
-### 🖥️ **HDL Implementation (VHDL/SystemVerilog)**
-Terdiri atas:
-- `SmartLibraryCore.vhd`
-- `SmartLibraryCore.sv`
-- Testbench untuk EDA Playground:
-  - `design.sv`
-  - `testbench.sv`
+### 🔶 HDL Implementation
+File HDL:
+- `design.sv`
+- `testbench.sv`
+- `design.vhd`
+- `testbench.vhd`
 
-### 💻 **C# Software Model**
-Software reference model mencerminkan seluruh logika DQM:
-- Quantization  
-- FSM transitions  
-- Safety rules  
-- Actuator outputs  
+Dapat diuji pada:
+- EDA Playground  
+- ModelSim  
+- Riviera-PRO  
+- GHDL  
+
+### 🔷 C# Reference Implementation
+Engine software untuk:
+- Firmware IoT  
+- PC simulator  
+- Supervisory console  
+
+File:
+- `SmartLibraryController.cs`  
+- `Program.cs`  
+
+Termasuk:
 - Event logging system  
-
-📄 **File terkait:**  
-`src/SmartLibraryController.cs`  
-`src/Program.cs`
+- FSM behaviour  
+- Actuator output simulator  
 
 ---
 
 # 🚀 Features
-- 🔥 Deteksi kebakaran multi-sensor (temp, smoke, rate-of-rise)
-- 🌫️ Air quality monitoring (PM2.5, VOC)
-- 🔊 Noise event alert
-- 🔍 Real-time quantization pipeline
-- 🧮 Deterministic logic (Boolean)
-- 🔄 State machine with latching safety mode
-- 🧱 NAND/NOR universal-gate realisation
-- 💾 Log system & event tracking
-- 🧪 Testbench HDL ready for simulation in EDA Playground
-- 💻 C# engine ready for PC/IoT deployment
+- 🔥 Fire detection multi-sensor  
+- 🌫️ Air quality monitoring (PM2.5, VOC)  
+- 🔊 Noise threshold detection  
+- 🤖 Digital quantization engine  
+- 🔄 Deterministic FSM transitions  
+- 🧱 Universal gate mapping (NAND/NOR)  
+- 🧪 HDL simulation-ready  
+- 💻 C# model for algorithm verification  
 
 ---
 
-# 🧪 Simulation
-## ▶ HDL Simulation  
-Gunakan EDA Playground:
+# 🧪 HDL Simulation Guide
+Gunakan EDA Playground → SystemVerilog/VHDL:
 
-- **SystemVerilog version**  
-  - `design.sv`  
-  - `testbench.sv`  
-  - Top entity: `tb`  
-
-- **VHDL version**  
-  - `design.vhd`  
-  - `testbench.vhd`  
-  - Top entity: `tb_SmartLibraryCore`  
-
-## ▶ C# Simulation (Console)
-Jalankan:
-
+### SystemVerilog
