@@ -135,3 +135,5 @@ Termasuk:
 Gunakan EDA Playground → SystemVerilog/VHDL:
 
 ### SystemVerilog
+
+This repository provides reference implementations for architectural verification and reproducibility purposes only. The code is not intended to represent optimized or benchmark-grade performance.
